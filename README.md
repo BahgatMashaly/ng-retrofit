@@ -27,6 +27,8 @@ Using
 
 in your app model add our class RetrofitAngular to your providers like this
 
+```
+
 {provide: RetrofitAngular, useClass: RetrofitAngular.setConfig(
 {
 baseUrl:"http://192.168.1.200:3000/",
@@ -39,20 +41,29 @@ globalFunctionAfterEveryRequest:SV.dismissProgressDialog
 )
 }
 
+```
+
 
 then you can make a service like this
 
 
+```
+
 @GET("/wcm/promotions/{lang}/{customerNumber}")
 public getPromotions(@Path("lang")lang:string,@Path("customerNumber")customerNumber:number): Observable<any>  {return null;};
+
+```
 
 
 then consume the request like a method and handle returned Observable 
 
+```
 
 getPromotions("EN",1234,).subscribe((promotions=>{
 that.promotions=promotions;
 }), this.handleFailure);
+
+```
 
 
 
