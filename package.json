@@ -1,6 +1,6 @@
 {
   "name": "ng-retrofit",
-  "version": "1.0.0",
+  "version": “1.0.1”,
   "description": "ng-retrofit is a REST Client for angular2 applications Edit",
   "main": "index.js",
   "scripts": {
