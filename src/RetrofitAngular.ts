@@ -120,41 +120,26 @@ export class RetrofitAngular {
 
 }
 
-
-
 export var Path = paramBuilder("Path");
 export var Query = paramBuilder("Query");
 export var Body = paramBuilder("Body");
 export var BodyAsIs = paramBuilder("BodyAsIs")("BodyAsIs");
 export var File = paramBuilder("File")("File");
-
 export function Produces(producesDef:MediaType) {
     return function (target:RetrofitAngular, propertyKey:string, descriptor:any) {
         descriptor.isJSON = producesDef === MediaType.JSON;
         return descriptor;
     };
 }
-
 export enum MediaType {
     JSON
 }
-
-
 export var GET = methodBuilder(RequestMethods.Get);
 export var POST = methodBuilder(RequestMethods.Post);
 export var PUT = methodBuilder(RequestMethods.Put);
 export var DELETE = methodBuilder(RequestMethods.Delete);
-
-
-
 export var HEAD = methodBuilder(RequestMethods.Head);
-
 export var RoutePrefix = classRoutePrefix;
-
-
-
-
-
 function classRoutePrefix(url:string) {
     return function (target: Function) {
         //noinspection TypeScriptUnresolvedFunction
@@ -163,7 +148,6 @@ function classRoutePrefix(url:string) {
 
 
 }
-
 function paramBuilder(paramName:string) {
     return function (key:string) {
         return function (target:RetrofitAngular, propertyKey:string | symbol, parameterIndex:number) {
@@ -180,23 +164,18 @@ function paramBuilder(paramName:string) {
         };
     };
 }
-
-
 export function classHttpHeaders(headers:any) {
     return function (target: Function) {
          Reflect.defineMetadata("classHttpHeaders", headers, target);
     }
 }
-
-export function disableGlobalFunction(isDisableGlobalFunctionBeforeRequest:boolean,isDisableGlobalFunctionAfterRequest:boolean)
-{
+export function disableGlobalFunction(isDisableGlobalFunctionBeforeRequest:boolean,isDisableGlobalFunctionAfterRequest:boolean) {
     return function (target:RetrofitAngular, propertyKey:string, descriptor:any) {
         descriptor.isDisableGlobalFunctionBeforeRequest = isDisableGlobalFunctionBeforeRequest;
         descriptor.isDisableGlobalFunctionAfterRequest = isDisableGlobalFunctionAfterRequest;
         return descriptor;
     };
 }
-
 export function methodHttpHeaders(headersDef:any) {
     return function (target:RetrofitAngular, propertyKey:string, descriptor:any) {
         descriptor.methodHttpHeaders = headersDef;
@@ -219,7 +198,7 @@ function methodBuilder(method:number) {
             var pFile = target[`${propertyKey}_File_parameters`];
             descriptor.value = function (...args:any[]) {
 
-                
+
                 if(RetrofitAngular.isTest) {
 
                 return RetrofitAngular.responseFromDummyFunction();
@@ -231,19 +210,18 @@ function methodBuilder(method:number) {
                 if(pBodyAsIs)
                 {
 
-                    for (var obj1 in args[pBody[0].parameterIndex]) {
-                        if (args[pBody[0].parameterIndex][obj1] === undefined) {
-                            args[pBody[0].parameterIndex][obj1] = null;
-                        }
-                    }
-
-                    body= JSON.stringify(args[pBody[0].parameterIndex])
+                    // for (var obj1 in args[pBody[0].parameterIndex]) {//todo// convert undefined to null not to macke exeption
+                    //     if (args[pBody[0].parameterIndex][obj1] === undefined) {
+                    //         args[pBody[0].parameterIndex][obj1] = null;
+                    //     }
+                    // }
+                    body= JSON.stringify(args[pBodyAsIs[0].parameterIndex])//TODO
                 }
 
                 else if (pBody) {
                     body={}
                     pBody
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                        .filter(pxxx => args[pxxx.parameterIndex]) // filter out optional parameters
                         .forEach(p => {
                             var key = p.key;
                             var value = args[p.parameterIndex];
@@ -474,5 +452,6 @@ function methodBuilder(method:number) {
         };
     };
 }
+
 
 
