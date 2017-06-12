@@ -28,12 +28,11 @@
  */
 
 import {
-    Headers as AngularHeaders,
     Request,
     RequestOptions,
     RequestMethod as RequestMethods,
     Response,
-    URLSearchParams, Http, XHRBackend, ResponseOptions, BrowserXhr, Headers, CookieXSRFStrategy, BaseRequestOptions
+    URLSearchParams, Http, XHRBackend, ResponseOptions, BrowserXhr, Headers as AngularHeaders, CookieXSRFStrategy, BaseRequestOptions
 } from "@angular/http";
 import {Observable} from "rxjs/Observable";
  import "rxjs/add/operator/map";
@@ -51,14 +50,14 @@ export class RetrofitAngular {
 
     public static isTest=false
     public static responseFromDummyFunction;
-    public static defaultHttpHeaderContentType;
+    public static defaultHttpHeaders;
 
     public static setConfig(config:any={}):any{
     if(config['baseUrl']) {
         RetrofitAngular.baseUrl = config['baseUrl'];
     }
     RetrofitAngular.isTest=config['isTest'];
-    RetrofitAngular.defaultHttpHeaderContentType=config['defaultHttpHeaderContentType'];
+    RetrofitAngular.defaultHttpHeaders=config['defaultHttpHeaders'];
      RetrofitAngular.responseFromDummyFunction=config['responseFromDummyFunction'];
     RetrofitAngular.globalFunctionBeforeEveryRequest=config['globalFunctionBeforeEveryRequest'];
     RetrofitAngular.globalFunctionAfterEveryRequest=config['globalFunctionAfterEveryRequest'];
@@ -69,8 +68,8 @@ export class RetrofitAngular {
     public static http:Http = new Http(new XHRBackend(new BrowserXhr(), new ResponseOptions({
                 body: null,
                 headers: (function () {
-                    var headers = new Headers();
-                    headers.append('Accept', 'application/json')
+                    var headers = new AngularHeaders({'Accept':'application/json'});
+                   // headers.append('Accept', 'application/json')
                     return headers;
                 })(),
                 status: 200,
@@ -183,7 +182,7 @@ function paramBuilder(paramName:string) {
 }
 
 
-export function classHttpHeaders(headers:any) {
+export function classHttpHeaders(headers:AngularHeaders) {
     return function (target: Function) {
          Reflect.defineMetadata("classHttpHeaders", headers, target);
     }
@@ -198,7 +197,7 @@ export function disableGlobalFunction(isDisableGlobalFunctionBeforeRequest:boole
     };
 }
 
-export function methodHttpHeaders(headersDef:any) {
+export function methodHttpHeaders(headersDef:AngularHeaders) {
     return function (target:RetrofitAngular, propertyKey:string, descriptor:any) {
         descriptor.methodHttpHeaders = headersDef;
         return descriptor;
@@ -305,22 +304,30 @@ function methodBuilder(method:number) {
                 // set class default headers
 
                 var headers = new AngularHeaders();
-                headers.append('Content-Type', RetrofitAngular.defaultHttpHeaderContentType);
+                headers=RetrofitAngular.defaultHttpHeaders;
+               // headers= RetrofitAngular.defaultHttpHeaders;
                 //noinspection TypeScriptUnresolvedFunction
                 let classHttpHeaders = Reflect.getMetadata("classHttpHeaders", target.constructor);//class
+if(classHttpHeaders)
+{
+    headers=classHttpHeaders;
+}
+                // for (var k in classHttpHeaders) { //method
+                //     if (descriptor.classHttpHeaders.hasOwnProperty(k)) {
+                //         headers.set(k, descriptor.classHttpHeaders[k]);
+                //     }
+                // }
 
-                for (var k in classHttpHeaders) { //method
-                    if (descriptor.classHttpHeaders.hasOwnProperty(k)) {
-                        headers.set(k, descriptor.classHttpHeaders[k]);
-                    }
+                if(descriptor.methodHttpHeaders)
+                {
+                    headers=descriptor.methodHttpHeaders;
                 }
-
                 // set method specific headers
-                for (var k in descriptor.methodHttpHeaders) { //method
-                    if (descriptor.methodHttpHeaders.hasOwnProperty(k)) {
-                        headers.set(k, descriptor.methodHttpHeaders[k]);
-                    }
-                }
+                // for (var k in descriptor.methodHttpHeaders) { //method
+                //     if (descriptor.methodHttpHeaders.hasOwnProperty(k)) {
+                //         headers.set(k, descriptor.methodHttpHeaders[k]);
+                //     }
+                // }
 
 
 
