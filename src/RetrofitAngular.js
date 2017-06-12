@@ -47,7 +47,7 @@ var RetrofitAngular = RetrofitAngular_1 = (function () {
             RetrofitAngular_1.baseUrl = config['baseUrl'];
         }
         RetrofitAngular_1.isTest = config['isTest'];
-        RetrofitAngular_1.defaultHttpHeaderContentType = config['defaultHttpHeaderContentType'];
+        RetrofitAngular_1.defaultHttpHeaders = config['defaultHttpHeaders'];
         RetrofitAngular_1.responseFromDummyFunction = config['responseFromDummyFunction'];
         RetrofitAngular_1.globalFunctionBeforeEveryRequest = config['globalFunctionBeforeEveryRequest'];
         RetrofitAngular_1.globalFunctionAfterEveryRequest = config['globalFunctionAfterEveryRequest'];
@@ -92,8 +92,8 @@ RetrofitAngular.isTest = false;
 RetrofitAngular.http = new http_1.Http(new http_1.XHRBackend(new http_1.BrowserXhr(), new http_1.ResponseOptions({
     body: null,
     headers: (function () {
-        var headers = new http_1.Headers();
-        headers.append('Accept', 'application/json');
+        var headers = new http_1.Headers({ 'Accept': 'application/json' });
+        // headers.append('Accept', 'application/json')
         return headers;
     })(),
     status: 200,
@@ -254,20 +254,27 @@ function methodBuilder(method) {
                 // Headers
                 // set class default headers
                 var headers = new http_1.Headers();
-                headers.append('Content-Type', RetrofitAngular.defaultHttpHeaderContentType);
+                headers = RetrofitAngular.defaultHttpHeaders;
+                // headers= RetrofitAngular.defaultHttpHeaders;
                 //noinspection TypeScriptUnresolvedFunction
                 var classHttpHeaders = Reflect.getMetadata("classHttpHeaders", target.constructor); //class
-                for (var k in classHttpHeaders) {
-                    if (descriptor.classHttpHeaders.hasOwnProperty(k)) {
-                        headers.set(k, descriptor.classHttpHeaders[k]);
-                    }
+                if (classHttpHeaders) {
+                    headers = classHttpHeaders;
+                }
+                // for (var k in classHttpHeaders) { //method
+                //     if (descriptor.classHttpHeaders.hasOwnProperty(k)) {
+                //         headers.set(k, descriptor.classHttpHeaders[k]);
+                //     }
+                // }
+                if (descriptor.methodHttpHeaders) {
+                    headers = descriptor.methodHttpHeaders;
                 }
                 // set method specific headers
-                for (var k in descriptor.methodHttpHeaders) {
-                    if (descriptor.methodHttpHeaders.hasOwnProperty(k)) {
-                        headers.set(k, descriptor.methodHttpHeaders[k]);
-                    }
-                }
+                // for (var k in descriptor.methodHttpHeaders) { //method
+                //     if (descriptor.methodHttpHeaders.hasOwnProperty(k)) {
+                //         headers.set(k, descriptor.methodHttpHeaders[k]);
+                //     }
+                // }
                 if (pFile) {
                     headers.set('Content-Type', 'multipart/form-data');
                 }
