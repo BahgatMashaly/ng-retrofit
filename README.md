@@ -34,7 +34,7 @@ in your app model add our class RetrofitAngular to your providers like this
 baseUrl:"http://192.168.1.200:3000/",
 isTest:true,
 responseFromDummyFunction:TEST.getDummyServiceResponse,
-defaultHttpHeaderContentType:"application/json",
+  defaultHttpHeaders:new AngularHeaders({"Content-Type":"application/json"}),
 globalFunctionBeforeEveryRequest:SV.showProgressDialog,
 globalFunctionAfterEveryRequest:SV.dismissProgressDialog
 }
