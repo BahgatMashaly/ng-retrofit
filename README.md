@@ -68,7 +68,7 @@ that.promotions=promotions;
 
 
 
-
+tsc RetrofitAngular.ts --sourceMap
 
 
 
